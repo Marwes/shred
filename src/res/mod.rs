@@ -31,6 +31,15 @@ pub struct Fetch<'a, T: 'a> {
     phantom: PhantomData<&'a T>,
 }
 
+impl<'a, T> Clone for Fetch<'a, T> {
+    fn clone(&self) -> Self {
+        Fetch {
+            inner: self.inner.clone(),
+            phantom: PhantomData,
+        }
+    }
+}
+
 impl<'a, T> Deref for Fetch<'a, T>
 where
     T: Resource,
@@ -81,11 +90,7 @@ pub trait Resource: Any + Send + Sync + 'static {}
 
 mopafy!(Resource);
 
-impl<T> Resource for T
-where
-    T: Any + Send + Sync,
-{
-}
+impl<T> Resource for T where T: Any + Send + Sync {}
 
 /// The id of a [`Resource`],
 /// which is a tuple struct with a type
